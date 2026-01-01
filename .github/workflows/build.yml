@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    # Updated to match your repository name
+    # UPDATED: Changed to your repository name
     if: github.repository == 'qasimsk20/catppuccin-high-contrast-userstyles'
     runs-on: ubuntu-latest
     permissions:
@@ -16,6 +16,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Note: If you don't have a USERSTYLES_TOKEN secret, 
+          # you can use the default GITHUB_TOKEN for basic releases
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Deno
         uses: nekowinston/setup-deno@main
@@ -26,9 +30,10 @@ jobs:
         run: deno task ci:stylus-import
 
       - name: Upload release artifact
+        # This will create/update the release 'all-userstyles-export'
+        # and attach the import.json file to it.
         run: |
-          # Create the release if it doesn't exist, then upload the file
-          gh release view all-userstyles-export || gh release create all-userstyles-export --title "All Userstyles Export" --notes "Automated export of all userstyles for Stylus import."
-          gh release upload all-userstyles-export ./dist/import.json --clobber
+          gh release create all-userstyles-export --title "All Userstyles Export" --notes "Automated export" || true
+          gh release upload --clobber all-userstyles-export ./dist/import.json
         env:
           GH_TOKEN: ${{ github.token }}
