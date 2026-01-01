@@ -28,6 +28,9 @@ for (const file of getUserstylesFiles()) {
     updateUrl: metadata.updateURL,
     usercssData: metadata,
     sourceCode: content,
+    // Add dummy sections array for compatibility with older Stylus versions
+    // that require sections to be present for the import to work properly.
+    sections: [{ code: "" }],
   } as Record<string, unknown>;
 
   userstyle.originalDigest = await calcStyleDigest(userstyle);
